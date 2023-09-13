@@ -1,36 +1,47 @@
-import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
+# Sample movie dataset with characteristics (same as previous example)
+movies = [
+    {
+        'title': 'Movie A',
+        'genre': ['Action', 'Adventure'],
+        'director': 'Director1',
+        'plot': 'Plot of Movie A'
+    },
+    {
+        'title': 'Movie B',
+        'genre': ['Drama', 'Romance'],
+        'director': 'Director2',
+        'plot': 'Plot of Movie B'
+    },
+    {
+        'title': 'Movie C',
+        'genre': ['Action', 'Sci-Fi'],
+        'director': 'Director1',
+        'plot': 'Plot of Movie C'
+    },
+    {
+        'title': 'Movie D',
+        'genre': ['Comedy'],
+        'director': 'Director3',
+        'plot': 'Plot of Movie D'
+    }
+]
 
-# Sample user-movie ratings data
-data = {
-    'User': ['User1', 'User2', 'User3', 'User4', 'User5'],
-    'Movie1': [4, 5, 0, 0, 2],
-    'Movie2': [0, 3, 4, 0, 5],
-    'Movie3': [2, 0, 0, 4, 0],
-    'Movie4': [0, 4, 5, 0, 3],
-}
+# Function to get movie recommendations based on user's preferred genre
+def get_recommendations(preferred_genre):
+    preferred_genre = preferred_genre.lower().strip()
+    recommended_movies = []
+    for movie in movies:
+        if preferred_genre in [genre.lower() for genre in movie['genre']]:
+            recommended_movies.append(movie['title'])
+    
+    return recommended_movies
 
-# Create a DataFrame
-df = pd.DataFrame(data)
+# Get user input for preferred genre
+preferred_genre = input('Enter your preferred movie genre: ')
 
-# Calculate cosine similarity between users
-user_similarity = cosine_similarity(df.iloc[:, 1:])
-
-# Define a target user
-target_user_index = 0
-
-# Find users similar to the target user
-similar_users = sorted(list(enumerate(user_similarity[target_user_index])), key=lambda x: x[1], reverse=True)
-
-# Recommend movies to the target user
-recommended_movies = []
-for user, similarity_score in similar_users:
-    if user == target_user_index:
-        continue  # Skip the target user
-    for movie in df.columns[1:]:
-        if df.at[user, movie] > 3 and df.at[target_user_index, movie] == 0:
-            recommended_movies.append(movie)
-
-# Print recommended movies
-print("Recommended movies for User1:")
-print(recommended_movies)
+# Get movie recommendations based on user's preferred genre
+recommended_movies = get_recommendations(preferred_genre)
+if recommended_movies:
+    print(f'Recommended Movies in the {preferred_genre} genre: {recommended_movies}')
+else:
+    print(f'No movies found in the {preferred_genre} genre.')
